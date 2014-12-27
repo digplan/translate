@@ -32,7 +32,7 @@ function translate() {
       dict[i] = resp[i];
     localStorage[lang] = JSON.stringify(dict);
     [].slice.call(pending).forEach(function(e){
-      e.innerText = dict[e.innerText] || e.innerText;
+      try{e.innerText = dict[e.innerText] || e.innerText} catch(e){};
     });
   }
 }

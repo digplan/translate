@@ -94,4 +94,4 @@ require('http').createServer(function(r, s) {
   r.on('end', function() {
     handleRequest(r, s, d);
   });
-}).listen(80);
+}).listen(process.env.port || 80);
