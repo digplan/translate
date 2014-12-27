@@ -69,9 +69,13 @@ function translationRequested(lang, words, cb) {
 }
 
 var cli = fs.readFileSync('./client.js').toString();
+var test = fs.readFileSync('./test.html').toString();
 
 function handleRequest(r, s, d){
-  if(r.url.match('client.js')) return s.end(cli);
+  if(r.url.match('client.js')) 
+    return s.end(cli.replace('$HOST', 'http://' + r.headers.host));
+  if(r.url.match('test.html')) 
+    return s.end(test);
   if(!r.url.match('translate')) return s.end('');
   s.setHeader('Access-Control-Allow-Origin', '*');
   d = JSON.parse(d);

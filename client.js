@@ -1,4 +1,4 @@
-(function translate() {
+function translate() {
   if (window.translatedTo) return;
   var lang = window.lang || navigator.language.split('-')[0] + '.json';
 
@@ -23,7 +23,7 @@
     return;
   
   var x = new XMLHttpRequest;
-  x.open('POST', 'http://localhost/translate', true);
+  x.open('POST', '$HOST/translate', true);
   x.send(JSON.stringify(req));
   x.onload = function(r) {
     var resp = JSON.parse(r.target.responseText);
@@ -35,4 +35,6 @@
       e.innerText = dict[e.innerText] || e.innerText;
     });
   }
-})();
+}
+
+window.addEventListener('load', translate);
