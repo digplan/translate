@@ -15,10 +15,10 @@ var files = fs.readdirSync(dir);
 files.forEach(function(file) {
   data[file] = require(dir + '/' + file);
 });
-console.log(data)
+if(process.env.debug) console.log(data)
 
 function getNewTranslation(text, lang, cb) {
-  console.log('requesting from ms')
+  if(process.env.debug) console.log('requesting from msft')
   client.translate({
     text: text,
     to: lang
@@ -32,7 +32,7 @@ function translationRequested(lang, words, cb) {
   var path = dir + '/' + lang;
 
   if (!data[lang]) {
-    console.log('no lang exist, creating')
+    if(process.env.debug) console.log('no lang exist, creating')
     fs.writeFileSync(path, '{}');
     data[lang] = {};
   }
@@ -44,10 +44,10 @@ function translationRequested(lang, words, cb) {
     console.log('checking for', data[lang][word])
     if (data[lang][word]) {
       resp[word] = data[lang][word];
-      console.log('found');
+      if(process.env.debug) console.log('found');
       len--;
     } else {
-      console.log('not found');
+      if(process.env.debug) console.log('not found');
       getNewTranslation(word, lang.replace('.json', ''), function(d) {
         if (d) {
           resp[word] = d;
@@ -60,7 +60,7 @@ function translationRequested(lang, words, cb) {
 
   setTimeout(function() {
     cb(resp);
-    console.log(resp)
+    if(process.env.debug) console.log('saving', path, data[lang]);
     fs.writeFileSync(path, JSON.stringify(data[lang], null, 2));
   }, 4000);
 
@@ -72,7 +72,7 @@ function handleRequest(r, s, d){
   d = JSON.parse(d);
 
   translationRequested(d.shift(), d, function(resp){
-    console.log('respong', resp)
+    if(process.env.debug) console.log('responding', resp)
     s.end(JSON.stringify(resp));
   })
 }
