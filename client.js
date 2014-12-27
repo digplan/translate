@@ -1,17 +1,18 @@
 (function translate() {
-  //if (window.translatedTo) return;
-  //var lang = navigator.language.split('-')[0] + '.json';
-  var lang = 'ru.json';
+  if (window.translatedTo) return;
+  var lang = window.lang || navigator.language.split('-')[0] + '.json';
+
   if (!localStorage[lang])
     localStorage[lang] = '{}';
   var dict = JSON.parse(localStorage[lang]);
   
   var req = [lang];
+  var pending = [];
   [].slice.call(document.querySelectorAll('body *')).forEach(function(e) {
     if (!e.innerText.trim().length || e.innerText.length > 60 || e.tagName == 'tr')
       return;
     try {
-      e.innerText = dict[e.innerText] || (req.push(e.innerText) && e.innerText);
+      e.innerText = dict[e.innerText] || (req.push(e.innerText) && pending.push(e) && e.innerText);
     } catch (e) {
     }
   });
@@ -30,5 +31,8 @@
     for (i in resp)
       dict[i] = resp[i];
     localStorage[lang] = JSON.stringify(dict);
+    [].slice.call(pending).forEach(function(e){
+      e.innerText = dict[e.innerText] || e.innerText;
+    });
   }
 })();
