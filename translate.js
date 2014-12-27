@@ -1,7 +1,9 @@
 var MsTranslator = require('mstranslator');
+var config = require('./config.json');
+
 var client = new MsTranslator({
-  client_id: "JSI18N",
-  client_secret: "znqba26ZqX0xUFhzfchAJ/elq1c4XW2FUOJ+K2KmP+o="
+  client_id: config.client_id,
+  client_secret: config.client_secret
 }, true);
 
 var fs = require('fs');
@@ -66,7 +68,10 @@ function translationRequested(lang, words, cb) {
 
 }
 
+var cli = fs.readFileSync('./client.js').toString();
+
 function handleRequest(r, s, d){
+  if(r.url.match('client.js')) return s.end(cli);
   if(!r.url.match('translate')) return s.end('');
   s.setHeader('Access-Control-Allow-Origin', '*');
   d = JSON.parse(d);
